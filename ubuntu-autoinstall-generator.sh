@@ -5,7 +5,9 @@ set -Eeuo pipefail
 #UBUNTU_RELNAME="Jammy Jellyfish"
 #UBUNTU_REL="jammy"
 
-UBUNTU_VERSION=24.04
+UBUNTU_MAJOR_VERSION=24
+UBUNTU_MINOR_VERSION=04
+UBUNTU_VERSION=${UBUNTU_MAJOR_VERSION}-${UBUNTU_MINOR_VERSION}
 UBUNTU_RELNAME="Noble Numbat"
 UBUNTU_REL="noble"
 
@@ -78,10 +80,10 @@ function parse_params() {
         source_iso="${script_dir}/${original_iso}"
         destination_iso="${script_dir}/ubuntu-autoinstall-$today.iso"
         sha_suffix="${today}"
-        gpg_verify=1
+        gpg_verify=0
         all_in_one=0
         use_hwe_kernel=0
-        md5_checksum=1
+        md5_checksum=0
         use_release_iso=0
 
         while :; do
@@ -131,7 +133,7 @@ function parse_params() {
         if [ "${use_release_iso}" -eq 1 ]; then
                 download_url="https://releases.ubuntu.com/${UBUNTU_REL}"
                 log "🔎 Checking for current release..."
-                download_iso=$(curl -sSL "${download_url}" | grep -oP 'ubuntu-20\.04\.\d*-live-server-amd64\.iso' | head -n 1)
+                download_iso=$(curl -sSL "${download_url}" | grep -oP "ubuntu-${UBUNTU_MAJOR_VERSION}\.${UBUNTU_MINOR_VERSION}\.\d*-live-server-amd64\.iso" | head -n 1)
                 original_iso="${download_iso}"
                 source_iso="${script_dir}/${download_iso}"
                 current_release=$(echo "${download_iso}" | cut -f2 -d-)
